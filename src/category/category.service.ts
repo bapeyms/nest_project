@@ -35,4 +35,28 @@ export class CategoryService {
     this.categories.push(newCategory);
     return newCategory;
   }
+
+  deleteCategory(id: number) : CategoryType | undefined {
+    const index = this.categories.findIndex(category => category.id === id);
+    if (index === -1) {
+      return undefined;
+    }
+    const deletedCategory = this.categories[index];
+    this.categories.splice(index, 1);
+
+    return deletedCategory;
+  }
+
+  updateCategory(id: number, category: CategoryCreateType): CategoryType | undefined {
+    const existingCategoty = this.categories.find(category => category.id === id);
+    if (existingCategoty === undefined) {
+      return undefined;
+    }
+
+    existingCategoty.title = category.title;
+    existingCategoty.image = category.image;
+    existingCategoty.parent_id = category.parent_id;
+
+    return existingCategoty;
+  }
 }

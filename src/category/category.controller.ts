@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Body, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Delete, Put, NotFoundException } from '@nestjs/common';
 import { CategoryService } from './category.service.js';
 import type { CategoryCreateType, CategoryType } from './type/CategoryType.js';
 
@@ -24,5 +24,24 @@ export class CategoryController {
   @Post()
   createCategory(@Body() category:CategoryCreateType): CategoryType {
     return this.categoryService.addCategory(category);
+  }
+
+  @Delete(':id')
+  deleteCategory(@Param('id') id: string): CategoryType {
+    const category = this.categoryService.deleteCategory(+id);
+    if (category !== undefined) {
+      return category;
+    }
+
+    throw new NotFoundException('Category not found');
+  }
+
+  @Put(':id')
+  updateCategory(@Param('id') id: string, @Body() category: CategoryCreateType): CategoryType {
+    const updatedCategory = this.categoryService.updateCategory(+id, category);
+    if (updatedCategory !== undefined) {
+      return updatedCategory;
+    }
+    throw new NotFoundException('Category not found');
   }
 }
