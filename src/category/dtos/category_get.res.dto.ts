@@ -3,5 +3,6 @@ export class CategoryGetResDto {
     title: string;
     slug: string;
     image?: string;
-    parent_id: number | null;
+    // ! означає, що це поле точно буде існувати
+    parent_id!: number | null;
 };
