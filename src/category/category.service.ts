@@ -1,42 +1,46 @@
 import { Injectable } from "@nestjs/common";
-import { CategoryCreateType, CategoryType } from "./type/CategoryType.js";
+import { CategoryCreateReqDto } from "./dtos/category_create.request.dto.js";
+import { CategoryGetResDto } from "./dtos/category_get.res.dto.js";
 
 @Injectable()
 export class CategoryService {
-  private categories: CategoryType[] = [
+  private categories: CategoryGetResDto[] = [
     {
       id: 1,
       title: "Chick",
+      slug: "chick chick",
       image: 'pic1.jpg',
       parent_id: 1
     },
     {
       id: 2,
       title: "Chirick",
+      slug: "chirick chirick",
       image: 'pic2.jpg',
       parent_id: 2
     }
   ];
-  getCategories(): CategoryType[] {
+  getCategories(): CategoryGetResDto[] {
     return this.categories;
   }
-  getCategoryById(id: number): CategoryType | undefined {
+  getCategoryById(id: number): CategoryGetResDto | undefined {
     return this.categories.find(category => category.id === id);
   }
 
-  addCategory(categoty: CategoryCreateType): CategoryType {
-    const newCategory: CategoryType = {
+  addCategory(category: CategoryCreateReqDto): CategoryGetResDto {
+    const newCategory: CategoryGetResDto = {
       id: this.categories.length + 1,
-      title: categoty.title,
-      image: categoty.image,
-      parent_id: categoty.parent_id
+      title: category.title,
+      slug: category.slug,
+      image: category.image,
+      parent_id: category.parent_id
     };
 
     this.categories.push(newCategory);
     return newCategory;
   }
 
-  deleteCategory(id: number) : CategoryType | undefined {
+  deleteCategory(id: number) : CategoryGetResDto | undefined {
     const index = this.categories.findIndex(category => category.id === id);
     if (index === -1) {
       return undefined;
@@ -47,13 +51,14 @@ export class CategoryService {
     return deletedCategory;
   }
 
-  updateCategory(id: number, category: CategoryCreateType): CategoryType | undefined {
+  updateCategory(id: number, category: CategoryCreateReqDto): CategoryGetResDto | undefined {
     const existingCategoty = this.categories.find(category => category.id === id);
     if (existingCategoty === undefined) {
       return undefined;
     }
 
     existingCategoty.title = category.title;
+    existingCategoty.slug = category.slug;
     existingCategoty.image = category.image;
     existingCategoty.parent_id = category.parent_id;
 

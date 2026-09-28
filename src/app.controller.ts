@@ -1,9 +1,11 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { AppService } from './app.service.js';
+import { CategoryService } from './category/category.service.js';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService) {}
 
   // endpoints - точки входу
   @Get('/chick')
