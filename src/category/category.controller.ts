@@ -8,41 +8,63 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
-  getAllCategories(): CategoryGetResDto[] {
-    return this.categoryService.getCategories();
+  async getAllCategories(): Promise<CategoryGetResDto[]> {
+    return await this.categoryService.findAll();
   }
-  
+
   @Get(':id')
-  getCategoryById(@Param('id') id: string): CategoryGetResDto {
-    const category: CategoryGetResDto | undefined = 
-    this.categoryService.getCategoryById(+id)
-    if (category !== undefined) {
-      return category;
-    }
-    throw new NotFoundException('Category not found');
+  async getCategoryById(@Param('id') id: string): Promise<CategoryGetResDto> {
+    return await this.categoryService.getCategoryById(+id);
   }
 
   @Post()
-  createCategory(@Body() category:CategoryCreateReqDto): CategoryGetResDto {
-    return this.categoryService.addCategory(category);
+  async create(
+    @Body() dto: CategoryCreateReqDto): Promise<CategoryGetResDto> {
+    return await this.categoryService.create(dto);
   }
 
   @Delete(':id')
-  deleteCategory(@Param('id') id: string): CategoryGetResDto {
-    const category = this.categoryService.deleteCategory(+id);
-    if (category !== undefined) {
-      return category;
-    }
-
-    throw new NotFoundException('Category not found');
+  async deleteCategory(@Param('id') id: string): Promise<CategoryGetResDto> {
+    return await this.categoryService.deleteCategoryById(+id);
   }
 
-  @Put(':id')
-  updateCategory(@Param('id') id: string, @Body() category: CategoryCreateReqDto): CategoryGetResDto {
-    const updatedCategory = this.categoryService.updateCategory(+id, category);
-    if (updatedCategory !== undefined) {
-      return updatedCategory;
-    }
-    throw new NotFoundException('Category not found');
-  }
+  // @Put(':id')
+  // updateCategory(@Param('id') id: string, @Body() category: Promise<CategoryCreateReqDto>): CategoryGetResDto {
+  //   return await this.categoryService.
+  // }
+
+  
+  // @Get(':id')
+  // getCategoryById(@Param('id') id: string): CategoryGetResDto {
+  //   const category: CategoryGetResDto | undefined = 
+  //   this.categoryService.getCategoryById(+id)
+  //   if (category !== undefined) {
+  //     return category;
+  //   }
+  //   throw new NotFoundException('Category not found');
+  // }
+
+  // @Post()
+  // createCategory(@Body() category:CategoryCreateReqDto): CategoryGetResDto {
+  //   return this.categoryService.addCategory(category);
+  // }
+
+  // @Delete(':id')
+  // deleteCategory(@Param('id') id: string): CategoryGetResDto {
+  //   const category = this.categoryService.deleteCategory(+id);
+  //   if (category !== undefined) {
+  //     return category;
+  //   }
+
+  //   throw new NotFoundException('Category not found');
+  // }
+
+  // @Put(':id')
+  // updateCategory(@Param('id') id: string, @Body() category: CategoryCreateReqDto): CategoryGetResDto {
+  //   const updatedCategory = this.categoryService.updateCategory(+id, category);
+  //   if (updatedCategory !== undefined) {
+  //     return updatedCategory;
+  //   }
+  //   throw new NotFoundException('Category not found');
+  // }
 }

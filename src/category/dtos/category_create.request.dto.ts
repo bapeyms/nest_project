@@ -1,5 +1,5 @@
 // DTO - Data Transfer Object приймає метод контролера та може їх повертати
-import { IsInt, IsString, IsOptional, IsNumber, IsNotEmpty, Length, MinLength, MaxLength, Min, Matches, ValidateIf} from "class-validator";
+import { IsBoolean, IsInt, IsString, IsOptional, IsNumber, IsNotEmpty, Length, MinLength, MaxLength, Min, Matches, ValidateIf} from "class-validator";
 
 export class CategoryCreateReqDto {
     @Length(5, 20, {message: "Min: 5, Max: 20"})
@@ -27,4 +27,11 @@ export class CategoryCreateReqDto {
     @Min(1, {message: "Parent ID must be greater than 0!"})
     // ! означає, що це поле точно буде існувати
     parent_id!: number | null;
+
+    @IsOptional()
+    @IsString({message: "Image path must be string!"})
+    description: string
+
+    @IsBoolean({message: "The value must be a boolean!"})
+    is_show: boolean
 };
