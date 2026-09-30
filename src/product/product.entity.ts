@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
+import type { Relation } from "typeorm";
 import { Category } from "../category/category.entity.js";
 
 @Entity('product')
@@ -20,5 +21,5 @@ export class Product {
 
     @ManyToOne(() => Category, (category: Category) => category.products, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'category_id' })
-    category: Category;
+    category: Relation<Category>;
 }

@@ -8,10 +8,10 @@ export class User {
     @Column({unique: true, length: 30})
     email: string;
 
-    @Column({type: 'varchar', length: 5})
+    @Column({type: 'varchar', length: 100})
     password_hash: string;
 
-    @Column({nullable: false, length: 2})
+    @Column({nullable: false, length: 50})
     fullname: string;
 
     @Column({default: false})
