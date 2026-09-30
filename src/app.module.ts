@@ -4,6 +4,8 @@ import { AppService } from './app.service.js';
 import { CategoryModule } from './category/category.module.js';
 import { TypeOrmModule } from '@nestjs/typeorm'; // для роботи з реляційними та деякими NoSQL базами даних
 import { ConfigModule } from '@nestjs/config';
+import { ProductModule } from './product/product.module.js';
+import { UserModule } from './user/user.module.js';
 
 @Module({
   imports: [
@@ -20,7 +22,9 @@ import { ConfigModule } from '@nestjs/config';
       database: process.env.DB_NAME,
       autoLoadEntities: true
     }),
-    CategoryModule],
+    CategoryModule,
+    ProductModule,
+    UserModule],
   controllers: [AppController],
   providers: [AppService],
 })

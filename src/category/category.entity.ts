@@ -1,7 +1,8 @@
 // Entity (модель/сутність) - клас, який декорується через декоратор @Entity
 // у цьому класі ми прописуємо поля майбутньої бази даних
-import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
- 
+import { OneToMany, Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
+import { Product } from '../product/product.entity.js';
+
 @Entity()
 export class Category {
   @PrimaryGeneratedColumn()
@@ -24,4 +25,7 @@ export class Category {
  
   @Column({ type: 'integer', nullable: true })
   parent_id: number | null;
+
+  @OneToMany(() => Product, (product: Product) => product.category)
+  products: Product[];
 }
