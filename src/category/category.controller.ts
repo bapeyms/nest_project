@@ -1,7 +1,10 @@
-import { Controller, Get, Post, Param, Body, Delete, Put, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Delete, Put, Patch } from '@nestjs/common';
 import { CategoryService } from './category.service.js';
+
 import { CategoryCreateReqDto } from './dtos/category_create.request.dto.js';
 import { CategoryGetResDto } from './dtos/category_get.res.dto.js';
+import { CategoryUpdateReqDto } from './dtos/category_update.req.dto.js';
+import { CategoryPatchReqDto } from './dtos/category_patch.req.dto.js';
 
 @Controller('category')
 export class CategoryController {
@@ -28,12 +31,16 @@ export class CategoryController {
     return await this.categoryService.deleteCategoryById(+id);
   }
 
-  // @Put(':id')
-  // updateCategory(@Param('id') id: string, @Body() category: Promise<CategoryCreateReqDto>): CategoryGetResDto {
-  //   return await this.categoryService.
-  // }
+  @Put(':id')
+  async updateCategory(@Param('id') id:string, @Body() dto:CategoryUpdateReqDto): Promise<CategoryGetResDto> {
+    return await this.categoryService.updateCategory(+id, dto);
+  }
 
-  
+  @Patch(':id')
+  async patchCategory(@Param('id') id:string, @Body() dto:CategoryPatchReqDto): Promise<CategoryGetResDto> {
+    return await this.categoryService.updateCategory(+id, dto);
+  }
+
   // @Get(':id')
   // getCategoryById(@Param('id') id: string): CategoryGetResDto {
   //   const category: CategoryGetResDto | undefined = 
