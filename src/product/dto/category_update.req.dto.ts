@@ -1,4 +1,4 @@
-export class ProductUpdateResDto {
+export class ProductUpdateReqDto {
     title: string;
     slug: string;
     price: number;

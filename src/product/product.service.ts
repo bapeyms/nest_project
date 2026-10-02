@@ -5,8 +5,8 @@ import { Repository } from 'typeorm';
 
 import { ProductGetResDto } from './dto/category_get.res.dto.js';
 import { ProductCreateReqDto } from './dto/product_create.req.dto.js';
-import { ProductUpdateResDto } from './dto/category_update.req.dto.js';
-import { ProductPatchResDto } from './dto/category_patch.req.dto.js';
+import { ProductUpdateReqDto } from './dto/category_update.req.dto.js';
+import { ProductPatchReqDto } from './dto/category_patch.req.dto.js';
 
 @Injectable()
 export class ProductService {
@@ -17,23 +17,23 @@ export class ProductService {
     return await this._repository.find();
   }
 
-  async getCategoryById(id: number): Promise<ProductGetResDto> {
-    const category = await this._repository.findOneBy({id});
-    if (!category) {
-      throw new NotFoundException(`Category with ID ${id} is not found`)
+  async getProductById(id: number): Promise<ProductGetResDto> {
+    const product = await this._repository.findOneBy({id});
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${id} is not found`)
     }
-    return category;
+    return product;
   }
   
   async create(dto: ProductCreateReqDto): Promise<ProductGetResDto> {
-    const category = this._repository.create({
+    const product = this._repository.create({
       title: dto.title,
       slug: dto.slug,
       price: dto.price,
       category_id: dto.category_id
     });
     
-    const result = await this._repository.save(category);
+    const result = await this._repository.save(product);
     return {
       id: result.id,
       title: result.title,
@@ -43,19 +43,70 @@ export class ProductService {
     };
   }
   
-  async deleteCategoryById(id: number): Promise<ProductGetResDto> {
-    const category = await this._repository.findOneBy({id});
-    if (!category) {
-      throw new NotFoundException(`Category with ID ${id} is not found`)
+  async deleteProductById(id: number): Promise<ProductGetResDto> {
+    const product = await this._repository.findOneBy({id});
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${id} is not found`)
     }
     
-    await this._repository.remove(category);
+    await this._repository.remove(product);
     return {
-      id: category.id,
-      title: category.title,
-      slug: category.slug,
-      price: category.price,
-      category_id: category.category_id
+      id: product.id,
+      title: product.title,
+      slug: product.slug,
+      price: product.price,
+      category_id: product.category_id
     };
   }
+
+  async updateProduct(id: number, dto: ProductUpdateReqDto): Promise<ProductGetResDto> {
+    const product = await this._repository.findOneBy({id});
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${id} is not found`)
+    }
+  
+    if (dto.slug && dto.slug !== product.slug) {
+      const existingSlug = await this._repository.findOneBy({slug: dto.slug});
+      if (existingSlug) {
+        throw new ConflictException(`Product with slug ${dto.slug} is already exist`)
+      }
+    }
+  
+      product.title = dto.title;
+      product.slug = dto.slug;
+      product.price = dto.price;
+      product.category_id = dto.category_id;
+  
+      const updatedProduct = await this._repository.save(product);
+      return {
+        id: updatedProduct.id,
+        title: updatedProduct.title,
+        slug: updatedProduct.slug,
+        price: updatedProduct.price,
+        category_id: updatedProduct.category_id
+      };
+    }
+  
+    async patchProduct(id: number, dto: ProductPatchReqDto): Promise<ProductGetResDto> {
+      const product = await this._repository.findOneBy({id});
+      if (!product) {
+        throw new ConflictException(`Product with ID ${id} is not found`)
+      }
+  
+      if (dto.slug && dto.slug !== product.slug) {
+        const existingSlug = await this._repository.findOneBy({slug: dto.slug});
+        if (existingSlug) {
+          throw new NotFoundException(`Product with slug ${dto.slug} is already exist`)
+        }
+      }
+      Object.assign(product, dto);
+      const updatedProduct = await this._repository.save(product);
+      return {
+        id: updatedProduct.id,
+        title: updatedProduct.title,
+        slug: updatedProduct.slug,
+        price: updatedProduct.price,
+        category_id: updatedProduct.category_id
+      };
+    }
 }

@@ -1,4 +1,4 @@
-export class ProductPatchResDto {
+export class ProductPatchReqDto {
     title?: string;
     slug?: string;
     price?: number;
