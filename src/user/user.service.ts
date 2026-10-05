@@ -7,6 +7,8 @@ import { CreateUserReqDto } from './dto/create-user.req.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
 import { HashHelper } from '../helpers/hash.helper.js';
 
+import { ConflictException } from '@nestjs/common/exceptions/conflict.exception.js';
+import { NotFoundException } from '@nestjs/common/exceptions/not-found.exception.js';
 
 @Injectable()
 export class UserService {
@@ -15,27 +17,64 @@ export class UserService {
   private readonly _hashHelper:HashHelper) {}
 
   async create(createUserDto: CreateUserReqDto) {
+    const existingUser = await this._repository.findOne({
+      where: {email: createUserDto.email}
+    });
+    if (existingUser) {
+      throw new ConflictException('User with this email already exists');
+    }
+
     const hashedPassword = await this._hashHelper.hash(createUserDto.password);
+    const {password, ...userData} = createUserDto;
     const user = this._repository.create({
-      ...createUserDto,
+      ...userData,
       password_hash: hashedPassword
     })
-    return await this._repository.save(user);
+    const savedUser = await this._repository.save(user);
+    const {password_hash, ...result} = savedUser;
+    return result;
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll() {
+    return await this._repository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    const user = await this._repository.findOne({
+      where: {id}
+    });
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const user = await this._repository.findOne(
+      { where: { id }}
+    );
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+
+    const { password, ...updateData } = updateUserDto;
+    const dataToUpdate: Partial<User> = { ...updateData };
+    if (password) {
+      dataToUpdate.password_hash = await this._hashHelper.hash(password);
+    }
+    const updatedUser = this._repository.merge(user, dataToUpdate);
+    const savedUser = await this._repository.save(updatedUser);
+    const { password_hash, ...result } = savedUser;
+    return result;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    const user = await this._repository.findOne(
+      { where: { id }}
+    );
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    return await this._repository.remove(user);
   }
 }
