@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe} from '@nestjs/common';
 import { UserService } from './user.service.js';
 import { CreateUserReqDto } from './dto/create-user.req.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
+import { CreateAddressReqDto } from './dto/create-address.req.dto.js';
 
 @Controller('user')
 export class UserController {
@@ -30,5 +31,19 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
+  }
+
+  @Post(':id/addresses')
+  addAddress(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: CreateAddressReqDto,
+  ) {
+    return this.userService.addAddress(id, dto);
+  }
+
+  // GET /users/:id/addresses - Отримати список усіх адрес користувача
+  @Get(':id/addresses')
+  getUserAddresses(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.getUserAddresses(id);
   }
 }
