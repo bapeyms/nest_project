@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import type { Address } from "./address.entity.js";
 
 @Entity()
 export class User {
@@ -16,4 +17,7 @@ export class User {
 
     @Column({default: false})
     is_block: boolean;
+
+    @OneToMany('Address', (address: Address) => address.user, { cascade: true })
+    addresses: Address[];
 }

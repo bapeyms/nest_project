@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'; // для роботи з ре�
 import { ConfigModule } from '@nestjs/config';
 import { ProductModule } from './product/product.module.js';
 import { UserModule } from './user/user.module.js';
+import { LocationModule } from './location/location.module.js';
 
 @Module({
   imports: [
@@ -24,8 +25,9 @@ import { UserModule } from './user/user.module.js';
     }),
     CategoryModule,
     ProductModule,
-    UserModule],
-  controllers: [AppController],
-  providers: [AppService],
+    UserModule,
+    LocationModule],
+    controllers: [AppController],
+    providers: [AppService],
 })
 export class AppModule {}
